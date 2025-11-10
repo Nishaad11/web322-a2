@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Climate Solutions</title>
+  <link href="/css/main.css" rel="stylesheet">
+</head>
+<body>
+  <%- include('partials/navbar', {page: '/about'}) %>
+
+  <div class="container mx-auto p-4">
+    <div class="hero bg-base-200 rounded-box mb-8">
+      <div class="hero-content text-center">
+        <div class="max-w-md">
+          <h1 class="text-5xl font-bold">About Me</h1>
+          <p class="py-6">Nishaad – 109348243</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div class="flex justify-center">
+        <img 
+          src="GangstaCat.jpg" 
+          alt="Agent Whiskers – Senior Developer & Head of Security" 
+          class="rounded-lg shadow-2xl"
+        >
+      </div>
+
+      <div class="prose prose-lg">
+        <h2>Hey! I'm Nishaad – WEB322 student at Seneca College</h2>
+        <p>
+          This is <strong>Agent Whiskers</strong>, my senior developer and head of security.
+        </p>
+        <p>
+          He wrote <em>90% of the code</em>, reviewed every commit, and personally deployed to Vercel while I was getting treats.
+        </p>
+
+        <h3>Fun facts:</h3>
+        <ul class="list-disc pl-6 space-y-2">
+          <li><strong>9 lives</strong> = 9 backup deploys</li>
+          <li><strong>Purr-fect</strong> at debugging</li>
+          <li><strong>Current status:</strong> napping on the server</li>
+        </ul>
+
+        <p class="mt-6 text-xl font-bold text-primary">
+          Meow or never.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

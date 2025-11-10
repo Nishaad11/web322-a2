@@ -1,60 +1,71 @@
 /********************************************************************************
-* WEB322 – Assignment 01
+* WEB322 – Assignment 02
 *
 * I declare that this assignment is my own work in accordance with Seneca's
 * Academic Integrity Policy:
 *
 * https://www.senecapolytechnic.ca/about/policies/academic-integrity-policy.html
 *
-* Name: Nishaad      Student ID: 109348243      Date: 2025-09-30
+* Name: Nishaad      Student ID: 109348243      Date: 2025-11-09
 *
 ********************************************************************************/
 
 const express = require("express");
+const path = require("path");
 const projectData = require("./modules/projects");
 
 const app = express();
-const HTTP_PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080;
 
-// Initialize data before starting the server
+// ---------- EJS ----------
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
+// ---------- STATIC ----------
+app.use(express.static("public"));
+
+// ---------- DATA ----------
 projectData.initialize()
-    .then(() => {
-        console.log("Data initialized successfully!");
+  .then(() => {
+    console.log("Data ready");
 
-        // Routes
+    // ----- HOME -----
+    app.get("/", (req, res) => res.render("home", { page: "/" }));
 
-        // Home route
-        app.get("/", (req, res) => {
-            res.send("Assignment 1: Nishaad - 109348243");
-        });
+    // ----- ABOUT -----
+    app.get("/about", (req, res) => res.render("about", { page: "/about" }));
 
-        // Return all projects
-        app.get("/solutions/projects", (req, res) => {
-            projectData.getAllProjects()
-                .then(data => res.json(data))
-                .catch(err => res.status(500).send(err));
-        });
+    // ----- PROJECT LIST (optional sector) -----
+    app.get("/solutions/projects", (req, res) => {
+      const sector = req.query.sector;
+      const p = sector ? projectData.getProjectsBySector(sector) : projectData.getAllProjects();
 
-        // Demo: Get project by ID
-        app.get("/solutions/projects/id-demo", (req, res) => {
-            projectData.getProjectById(9)
-                .then(project => res.json(project))
-                .catch(err => res.status(404).send(err));
-        });
-
-        // Demo: Get projects by sector
-        app.get("/solutions/projects/sector-demo", (req, res) => {
-            projectData.getProjectsBySector("agriculture")
-                .then(projects => res.json(projects))
-                .catch(err => res.status(404).send(err));
-        });
-
-        // Start server
-        app.listen(HTTP_PORT, () => {
-            console.log(`Server listening on port ${HTTP_PORT}`);
-        });
-
-    })
-    .catch(err => {
-        console.log("Failed to initialize data:", err);
+      p.then(projects => res.render("projects", { projects, page: "/solutions/projects" }))
+       .catch(() => res.status(404).render("404", {
+         message: `No projects found for sector "${sector || "all"}".`,
+         page: ""
+       }));
     });
+
+    // ----- SINGLE PROJECT -----
+    app.get("/solutions/projects/:id", (req, res) => {
+      projectData.getProjectById(parseInt(req.params.id))
+        .then(project => res.render("project", { project, page: "" }))
+        .catch(() => res.status(404).render("404", {
+          message: `Project #${req.params.id} not found.`,
+          page: ""
+        }));
+    });
+
+    // ----- 404 FALLBACK -----
+    app.use((req, res) => {
+      res.status(404).render("404", {
+        message: "Page not found.",
+        page: ""
+      });
+    });
+
+    // ----- START -----
+    app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+  })
+  .catch(err => console.error("Init failed:", err));
